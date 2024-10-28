@@ -18,7 +18,7 @@ model Invoices {
   paymentId             Int                 @db.Integer
   nameInvoice           String              @db.VarChar(255)
   numberDocument        String              @db.VarChar(255)
-  state                 Boolean             @default(false)
+  state                 Boolean             @default(true)
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
   payments              Payments            @relation(fields: [paymentId], references: [id])
@@ -40,7 +40,7 @@ model Promotions {
 model PaymentStates {
   id                    Int                 @id @default(autoincrement())
   paymentId             Int                 @db.Integer
-  TypePaymentState      TypePaymentState
+  TypePaymentState      TypePaymentState    @default(PENDIENTE)
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
   payments              Payments            @relation(fields: [paymentId], references: [id])
@@ -48,7 +48,7 @@ model PaymentStates {
 
 model Payments {
   id                    Int                 @id @default(autoincrement())
-  suscriptionId         Int                 @db.Integer
+  subscriptionId        Int                 @db.Integer
   promotionId           Int?
   referenceCode         String              @db.VarChar(255)
   description           String              @db.VarChar(255)
@@ -61,7 +61,7 @@ model Payments {
   invoices              Invoices[]
   paymentStates         PaymentStates[]
   promotion             Promotions?         @relation(fields: [promotionId], references: [id])
-  subscriptions         Subscriptions       @relation(fields: [suscriptionId], references: [id])
+  subscriptions         Subscriptions       @relation(fields: [subscriptionId], references: [id])
 }
 
 model Plans {
@@ -70,7 +70,7 @@ model Plans {
   price                 Decimal             @default(0.0)
   discountPrice         Decimal             @default(0.0)
   typePlan              TypePlan
-  billingCycle          BillingCycle
+  billingCycle          Int
   userLimit             Int?
   features              String?
   state                 Boolean             @default(false)
@@ -83,8 +83,6 @@ model Subscriptions {
   id                    Int                 @id @default(autoincrement())
   businessId            Int                 @db.Integer
   planId                Int                 @db.Integer
-  start                 DateTime            @db.Date
-  end                   DateTime            @db.Date
   state                 Boolean             @default(false)
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
@@ -116,7 +114,7 @@ model Branches {
   state                 Boolean             @default(true)
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
-  businesses            Businesses          @relation(fields: [businessId], references: [id])
+  business              Businesses          @relation(fields: [businessId], references: [id])
   users                 Users[]
 }
 
@@ -145,7 +143,7 @@ model Users {
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
   branches              Branches[]
-  contact               Contacts[]
+  contacts              Contacts[]
   staff                 Staffs?
   student               Students?
   teacher               Teachers?
@@ -221,7 +219,7 @@ model Roles {
   updatedAt             DateTime            @updatedAt
   businesses            Businesses          @relation(fields: [businessId], references: [id])
   permissions           Permissions[]
-  staff                 Staffs[]
+  staffs                Staffs[]
 }
 
 // ENUMUS SECTIONS
@@ -235,12 +233,6 @@ enum TypePlan {
   BASICO
   PREMIUM
   EMPRESARIAL
-  PERSONALIZADO
-}
-
-enum BillingCycle {
-  MENSUAL
-  ANUAL
   PERSONALIZADO
 }
 

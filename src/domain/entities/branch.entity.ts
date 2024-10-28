@@ -1,3 +1,4 @@
+import { BusinessEntity } from "./business.entity";
 
 export class BranchEntity {
   constructor(
@@ -5,12 +6,13 @@ export class BranchEntity {
     public name: string,
     public address: string,
     public phone: string,
-    public state: boolean,
-
+    public business: BusinessEntity,
   ) { }
 
   static fromObject(object: { [key: string]: any; }) {
-    const { id, name, address, phone, state } = object;
-    return new BranchEntity(id, name, address, phone, state);
+    const { id, name, address, phone, business } = object;
+    const businessEntity = BusinessEntity.fromObject(business);
+
+    return new BranchEntity(id, name, address, phone, businessEntity);
   }
 }

@@ -1,4 +1,4 @@
-import { StaffAuthEntity, StudentAuthEntity, TeacherAuthEntity } from '..';
+import { BranchEntity, ContactEntity, StaffAuthEntity, StudentAuthEntity, TeacherAuthEntity } from '..';
 import { CustomError } from '../responses/custom.error';
 
 export class UserEntity {
@@ -7,12 +7,9 @@ export class UserEntity {
     public dni: string,
     public name: string,
     public lastName: string,
-    public email: string,
-    public emailValidated?: boolean,
-    public password?: string,
-    public codeValidation?: string,
+    public contacts: ContactEntity[],
+    public branches:BranchEntity[],
     public image?: string,
-    public phone?: string, // Asegúrate de incluir phone aquí
     public staffs?: StaffAuthEntity,
     public students?: StudentAuthEntity,
     public teachers?: TeacherAuthEntity,
@@ -24,49 +21,35 @@ export class UserEntity {
       dni,
       name,
       lastName,
-      email,
-      emailValidated,
-      password,
-      codeValidation,
       image,
-      phone, // Incluye phone aquí
       staff,
       student,
       teacher,
+      contacts,
+      branches,
     } = object;
 
     if (!id) throw CustomError.badRequest('Falta id');
-    if (!dni) throw CustomError.badRequest('Falta el número de carnet');
+    if (!dni) throw CustomError.badRequest('Falta el número dni');
     if (!name) throw CustomError.badRequest('Falta el nombre');
     if (!lastName) throw CustomError.badRequest('Falta el apellido');
-    if (!email) throw CustomError.badRequest('Falta el correo');
-    if (!emailValidated)
-    throw CustomError.badRequest('Falta la validación del correo');
-    if (!password) throw CustomError.badRequest('Falta la contraseña');
   
-    const staffAuthEntity = staff
-      ? StaffAuthEntity.fromObject(staff)
-      : undefined;
-    
-    const studentAuthEntity = student
-      ? StudentAuthEntity.fromObject(student)
-      : undefined;
+    const staffAuthEntity = staff? StaffAuthEntity.fromObject(staff): undefined;
+    const studentAuthEntity = student? StudentAuthEntity.fromObject(student): undefined;
+    const teacherAuthEntity = teacher? TeacherAuthEntity.fromObject(teacher): undefined;
+    const contactEntity = contacts? contacts.map((e:ContactEntity)=>ContactEntity.fromObject(e)) : undefined;
+    const branchesEntity = branches? branches.map((e:BranchEntity)=>BranchEntity.fromObject(e)) : undefined;
 
-    const teacherAuthEntity = teacher
-      ? TeacherAuthEntity.fromObject(teacher)
-      : undefined;
+
 
     return new UserEntity(
       id,
       dni,
       name,
       lastName,
-      email,
-      emailValidated,
-      password,
-      codeValidation,
+      contactEntity,
+      branchesEntity,
       image,
-      phone, // Asegúrate de pasar phone aquí
       staffAuthEntity,
       studentAuthEntity,
       teacherAuthEntity,
@@ -74,14 +57,13 @@ export class UserEntity {
   }
 
   static fromObject(object: { [key: string]: any }) {
-    const { id, dni, name, lastName, email, phone } = object; // Incluye phone aquí
+    const { id, dni, name, lastName } = object;
 
     if (!id) throw CustomError.badRequest('Falta id');
     if (!dni) throw CustomError.badRequest('Falta el número de carnet');
     if (!name) throw CustomError.badRequest('Falta el nombre');
     if (!lastName) throw CustomError.badRequest('Falta el apellido');
-    if (!email) throw CustomError.badRequest('Falta el correo');
 
-    return new UserEntity(id, dni, name, lastName, email, undefined, undefined, undefined, undefined, phone); // Incluye phone aquí
+    return new UserEntity(id, dni, name, lastName, [], [],undefined,undefined);
   }
 }

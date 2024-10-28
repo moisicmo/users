@@ -29,7 +29,7 @@ export class StudentEntity extends UserEntity {
     user: UserEntity,
     tutors?: TutorEntity[]
   ) {
-    super(user.id, user.dni, user.name, user.lastName, user.email);
+    super(user.id, user.dni, user.name, user.lastName, user.contacts, user.branches);
     this.id = id;
     this.code = code;
     this.birthdate = birthdate;

@@ -11,7 +11,8 @@ export class LoginUserDto {
   static create(object: { [key: string]: any }): [string?, LoginUserDto?] {
     const { data, typeContact, password } = object;
 
-    if (!data) return ['El email es obligatorio'];
+    if (!typeContact) return ['El tipo de contacto es obligatorio'];
+    if (!data) return [`El ${typeContact} es obligatorio`];
     if (typeContact == 'EMAIL') {
       if (!regularExps.email.test(data)) return ['el correo no es valido'];
     }

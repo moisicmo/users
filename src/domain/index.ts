@@ -10,6 +10,7 @@ export * from './entities/tutor.entity';
 export * from './entities/role.entity';
 export * from './entities/permission.entity';
 export * from './entities/business.entity';
+export * from './entities/contact.entity';
 
 export * from './dtos/branch/branch.dto';
 export * from './dtos/auth/register-user.dto';

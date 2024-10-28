@@ -3,7 +3,7 @@ import { CustomError, LoginUserDto, ValidateUserDto } from '../../domain';
 import { AuthService } from './auth.service';
 
 export class AuthController {
-  // DI
+  
   constructor(public readonly authService: AuthService) {}
 
   private handleError = (error: unknown, res: Response) => {

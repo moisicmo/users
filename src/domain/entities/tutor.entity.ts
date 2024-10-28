@@ -15,7 +15,7 @@ export class TutorEntity extends UserEntity {
   public readonly address: string;
 
   constructor(id: number, user: UserEntity, address: string) {
-    super(user.id, user.dni, user.name, user.lastName, user.email, undefined, undefined, undefined, undefined, user.phone); // Pasa phone aquí
+    super(user.id, user.dni, user.name, user.lastName, user.contacts, user.branches, undefined, undefined, undefined); // Pasa phone aquí
     this.id = id;
     this.address = address;
   }

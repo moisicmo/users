@@ -13,53 +13,55 @@ import { EmailService } from '../services';
 const prisma = new PrismaClient();
 
 export class AuthService {
-  // DI
+  
   constructor(
-    // DI - Email Service
     private readonly emailService: EmailService
   ) {}
 
   public async loginUser(dto: LoginUserDto) {
-
-    const contact = await prisma.contacts.findFirst({
-      where: {
-        data:dto.data,
-        typeContact: dto.typeContact,
-      },
+    
+    const user = await prisma.users.findFirst({
       include:{
-        user:{
-          include:{
-            staff: {
+        contacts:{
+          where:{
+            data:dto.data,
+            typeContact: dto.typeContact,
+          }
+        },
+        staff: {
+          include: {
+            role: {
               include: {
-                role: {
-                  include: {
-                    permissions: true,
-                  },
-                },
+                permissions: true,
               },
             },
-            student:true,
-            teacher:true,
+          },
+        },
+        student:true,
+        teacher:true,
+        branches:{
+          include:{
+            business:true,
           }
         }
       }
     })
-    if (!contact) throw CustomError.badRequest('No se pudo autenticar al usuario');
+    if (!user) throw CustomError.badRequest('No se pudo autenticar al usuario');
 
     const isMatching = bcryptAdapter.compare(
       dto.password,
-      contact.user.password
+      user.password
     );
     if (!isMatching) throw CustomError.badRequest('La Contraseña no es valida');
-    const token = await JwtAdapter.generateToken({ id: contact.user.id });
+    const token = await JwtAdapter.generateToken({ id: user.id });
     if (!token) throw CustomError.internalServer('Error al crear la llave');
 
-    if (!contact.validated) {
+    if (!user.contacts[0].validated) {
       const codeValidation = await this.sendEmailValidationLink(
         dto.data
       );
       await prisma.contacts.update({
-        where: { userId_typeContact: { userId: contact.userId, typeContact: contact.typeContact } },
+        where: { userId_typeContact: { userId: user.contacts[0].userId, typeContact: user.contacts[0].typeContact } },
         data: { codeValidation: await bcryptAdapter.hash(codeValidation) },
       });
       
@@ -70,7 +72,8 @@ export class AuthService {
         result: { token },
       });
     }
-    const { emailValidated, password, ...userEntity } = UserEntity.fromObjectAuth(contact.user);
+    console.log(JSON.stringify(user));
+    const { ...userEntity } = UserEntity.fromObjectAuth(user);
 
     return CustomSuccessful.response({
       result: {

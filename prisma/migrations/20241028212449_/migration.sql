@@ -5,9 +5,6 @@ CREATE TYPE "DiscountType" AS ENUM ('PERCENTAGE', 'FIXED');
 CREATE TYPE "TypePlan" AS ENUM ('BASICO', 'PREMIUM', 'EMPRESARIAL', 'PERSONALIZADO');
 
 -- CreateEnum
-CREATE TYPE "BillingCycle" AS ENUM ('MENSUAL', 'ANUAL', 'PERSONALIZADO');
-
--- CreateEnum
 CREATE TYPE "MethodPayment" AS ENUM ('EFECTIVO', 'QR', 'TRANSFERENCIA', 'TARJETA');
 
 -- CreateEnum
@@ -26,30 +23,19 @@ CREATE TYPE "TypeBusiness" AS ENUM ('ADMINISTRACION', 'SERVICIO', 'TIENDA', 'RES
 CREATE TYPE "TypeContact" AS ENUM ('PHONE', 'EMAIL', 'FACEBOOK', 'GOOGLE', 'APPLE');
 
 -- CreateEnum
-CREATE TYPE "TypePaymentState" AS ENUM ('FINALIZADO', 'RECHAZADO', 'ANULADO');
+CREATE TYPE "TypePaymentState" AS ENUM ('PENDIENTE', 'RECHAZADO', 'ANULADO', 'FINALIZADO');
 
 -- CreateTable
 CREATE TABLE "Invoices" (
     "id" SERIAL NOT NULL,
     "paymentId" INTEGER NOT NULL,
     "nameInvoice" VARCHAR(255) NOT NULL,
-    "nit" VARCHAR(255) NOT NULL,
-    "state" BOOLEAN NOT NULL DEFAULT false,
+    "numberDocument" VARCHAR(255) NOT NULL,
+    "state" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Invoices_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "PaymentStates" (
-    "id" SERIAL NOT NULL,
-    "paymentId" INTEGER NOT NULL,
-    "TypePaymentState" "TypePaymentState" NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "PaymentStates_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -68,16 +54,27 @@ CREATE TABLE "Promotions" (
 );
 
 -- CreateTable
+CREATE TABLE "PaymentStates" (
+    "id" SERIAL NOT NULL,
+    "paymentId" INTEGER NOT NULL,
+    "TypePaymentState" "TypePaymentState" NOT NULL DEFAULT 'PENDIENTE',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "PaymentStates_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Payments" (
     "id" SERIAL NOT NULL,
-    "suscriptionId" INTEGER NOT NULL,
+    "subscriptionId" INTEGER NOT NULL,
+    "promotionId" INTEGER,
+    "referenceCode" VARCHAR(255) NOT NULL,
     "description" VARCHAR(255) NOT NULL,
     "start" DATE NOT NULL,
     "end" DATE NOT NULL,
-    "referenceCode" VARCHAR(255) NOT NULL,
     "methodPayment" "MethodPayment" NOT NULL DEFAULT 'EFECTIVO',
     "amount" DECIMAL(65,30) NOT NULL,
-    "promotionId" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -91,7 +88,7 @@ CREATE TABLE "Plans" (
     "price" DECIMAL(65,30) NOT NULL DEFAULT 0.0,
     "discountPrice" DECIMAL(65,30) NOT NULL DEFAULT 0.0,
     "typePlan" "TypePlan" NOT NULL,
-    "billingCycle" "BillingCycle" NOT NULL,
+    "billingCycle" INTEGER NOT NULL,
     "userLimit" INTEGER,
     "features" TEXT,
     "state" BOOLEAN NOT NULL DEFAULT false,
@@ -106,8 +103,6 @@ CREATE TABLE "Subscriptions" (
     "id" SERIAL NOT NULL,
     "businessId" INTEGER NOT NULL,
     "planId" INTEGER NOT NULL,
-    "start" DATE NOT NULL,
-    "end" DATE NOT NULL,
     "state" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -321,7 +316,7 @@ ALTER TABLE "PaymentStates" ADD CONSTRAINT "PaymentStates_paymentId_fkey" FOREIG
 ALTER TABLE "Payments" ADD CONSTRAINT "Payments_promotionId_fkey" FOREIGN KEY ("promotionId") REFERENCES "Promotions"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Payments" ADD CONSTRAINT "Payments_suscriptionId_fkey" FOREIGN KEY ("suscriptionId") REFERENCES "Subscriptions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Payments" ADD CONSTRAINT "Payments_subscriptionId_fkey" FOREIGN KEY ("subscriptionId") REFERENCES "Subscriptions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Subscriptions" ADD CONSTRAINT "Subscriptions_businessId_fkey" FOREIGN KEY ("businessId") REFERENCES "Businesses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

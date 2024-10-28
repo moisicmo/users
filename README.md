@@ -16,3 +16,13 @@ Este proyecto esta desarrollado para la carrera de Ingeniería de Sistemas - Uni
 6. Ejecutar `npx prisma migrate dev` para realizar la migración y el seeder
 7. Si es necesario solo realizar el seeder, ejecutar`npx prisma db seed`
 8. Si es necesario reiniciar la migración, ejecutar `npx prisma migrate reset` o solo borrar la carpeta "migrations" y ejecutar el paso 6
+
+
+
+
+
+
+
+
+## Cron job
+crear un cron job, cada día debe verificar que suscripción tiene completado el billingCycle según el plan, si lo tiene completado debe crearse otro registro de pago 
