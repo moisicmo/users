@@ -1,0 +1,299 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Invoices {
+  id                    Int                 @id @default(autoincrement())
+  paymentId             Int                 @db.Integer
+  nameInvoice           String              @db.VarChar(255)
+  numberDocument        String              @db.VarChar(255)
+  state                 Boolean             @default(false)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  payments              Payments            @relation(fields: [paymentId], references: [id])
+}
+
+model Promotions {
+  id                    Int                 @id @default(autoincrement())
+  code                  String              @unique @db.VarChar(255)
+  discountType          DiscountType
+  discountValue         Decimal
+  expirationDate        DateTime?
+  usageLimit            Int?
+  usedCount             Int                 @default(0)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  payments              Payments[]
+}
+
+model PaymentStates {
+  id                    Int                 @id @default(autoincrement())
+  paymentId             Int                 @db.Integer
+  TypePaymentState      TypePaymentState
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  payments              Payments            @relation(fields: [paymentId], references: [id])
+}
+
+model Payments {
+  id                    Int                 @id @default(autoincrement())
+  suscriptionId         Int                 @db.Integer
+  promotionId           Int?
+  referenceCode         String              @db.VarChar(255)
+  description           String              @db.VarChar(255)
+  start                 DateTime            @db.Date
+  end                   DateTime            @db.Date
+  methodPayment         MethodPayment       @default(EFECTIVO)
+  amount                Decimal
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  invoices              Invoices[]
+  paymentStates         PaymentStates[]
+  promotion             Promotions?         @relation(fields: [promotionId], references: [id])
+  subscriptions         Subscriptions       @relation(fields: [suscriptionId], references: [id])
+}
+
+model Plans {
+  id                    Int                 @id @default(autoincrement())
+  name                  String              @db.VarChar(255)
+  price                 Decimal             @default(0.0)
+  discountPrice         Decimal             @default(0.0)
+  typePlan              TypePlan
+  billingCycle          BillingCycle
+  userLimit             Int?
+  features              String?
+  state                 Boolean             @default(false)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  subscriptions         Subscriptions[]
+}
+
+model Subscriptions {
+  id                    Int                 @id @default(autoincrement())
+  businessId            Int                 @db.Integer
+  planId                Int                 @db.Integer
+  start                 DateTime            @db.Date
+  end                   DateTime            @db.Date
+  state                 Boolean             @default(false)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  payments              Payments[]
+  businesses            Businesses          @relation(fields: [businessId], references: [id])
+  plans                 Plans               @relation(fields: [planId], references: [id])
+}
+
+model Businesses {
+  id                    Int                 @id @default(autoincrement())
+  typeBusiness          TypeBusiness
+  name                  String              @db.VarChar(255)
+  url                   String              @db.VarChar(255)
+  state                 Boolean             @default(true)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  subscriptions         Subscriptions[]
+  branches              Branches[]
+  permissions           Permissions[]
+  roles                 Roles[]
+}
+
+model Branches {
+  id                    Int                 @id @default(autoincrement())
+  businessId            Int                 @db.Integer
+  name                  String              @db.VarChar(255)
+  address               String              @db.VarChar(255)
+  phone                 String              @db.VarChar(255)
+  state                 Boolean             @default(true)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  businesses            Businesses          @relation(fields: [businessId], references: [id])
+  users                 Users[]
+}
+
+model Contacts {
+  userId                Int                 @db.Integer
+  typeContact           TypeContact         @default(EMAIL)
+  data                  String              @db.VarChar(255)
+  validated             Boolean             @default(false)
+  codeValidation        String?             @unique
+  state                 Boolean             @default(true)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  user                  Users               @relation(fields: [userId], references: [id])
+  @@unique([userId,typeContact])
+}
+
+model Users {
+  id                    Int                 @id @default(autoincrement())
+  dni                   String              @unique
+  name                  String              @db.VarChar(255)
+  lastName              String              @db.VarChar(255)
+  image                 String?             @db.VarChar(255)
+  password              String              @db.VarChar(255)
+  sessionToken          String?             @db.VarChar(255)
+  expiresToken          DateTime?           @db.Time()
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  branches              Branches[]
+  contact               Contacts[]
+  staff                 Staffs?
+  student               Students?
+  teacher               Teachers?
+  tutor                 Tutors?
+}
+
+model Students {
+  id                    Int                 @id @default(autoincrement())
+  userId                Int                 @unique
+  code                  String              @unique
+  birthdate             DateTime?           @db.Date
+  gender                Gender?
+  grade                 Int?                @db.Integer
+  institution           String?             @db.VarChar(255)
+  typeInstitution       TypeInstitution?    @default(OTRO)
+  educationLevel        EducationLevel?     @default(OTRO)
+  state                 Boolean             @default(true)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  user                  Users               @relation(fields: [userId], references: [id])
+  tutors                Tutors[]
+}
+
+model Tutors {
+  id                    Int                 @id @default(autoincrement())
+  userId                Int                 @unique
+  address               String              @db.VarChar(255)
+  state                 Boolean             @default(true)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  user                  Users               @relation(fields: [userId], references: [id])
+  students              Students[]
+}
+
+model Teachers {
+  id                    Int                 @id @default(autoincrement())
+  userId                Int                 @unique
+  state                 Boolean             @default(true)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  user                  Users               @relation(fields: [userId], references: [id])
+}
+
+model Staffs {
+  id                    Int                 @id @default(autoincrement())
+  userId                Int                 @unique
+  roleId                Int                 @db.Integer
+  state                 Boolean             @default(true)
+  superStaff            Boolean             @default(false)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  user                  Users               @relation(fields: [userId], references: [id])
+  role                  Roles               @relation(fields: [roleId], references: [id])
+}
+
+model Permissions {
+  id                    Int                 @id @default(autoincrement())
+  businessId            Int                 @db.Integer
+  name                  String              @db.VarChar(255)
+  module                String              @db.VarChar(255)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  businesses            Businesses          @relation(fields: [businessId], references: [id])
+  roles                 Roles[]
+}
+
+model Roles {
+  id                    Int                 @id @default(autoincrement())
+  businessId            Int                 @db.Integer
+  name                  String              @db.VarChar(255)
+  state                 Boolean             @default(true)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  businesses            Businesses          @relation(fields: [businessId], references: [id])
+  permissions           Permissions[]
+  staff                 Staffs[]
+}
+
+// ENUMUS SECTIONS
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+enum TypePlan {
+  BASICO
+  PREMIUM
+  EMPRESARIAL
+  PERSONALIZADO
+}
+
+enum BillingCycle {
+  MENSUAL
+  ANUAL
+  PERSONALIZADO
+}
+
+enum MethodPayment {
+  EFECTIVO
+  QR
+  TRANSFERENCIA
+  TARJETA
+}
+
+enum Gender {
+  MASCULINO
+  FEMENINO
+}
+
+enum TypeInstitution {
+  OTRO
+  COLEGIO
+  UNIVERSIDAD
+  EMPRESA
+}
+
+enum EducationLevel {
+  OTRO
+  PRIMARIA
+  SECUNDARIA
+  PREGRADO
+  POSTGRADO
+}
+
+enum TypeBusiness {
+  ADMINISTRACION
+  SERVICIO
+  TIENDA
+  RESTAURANT
+  HOTEL
+  CAPACITACION
+  INSTITUTO
+  COLEGIO
+  TRANSPORTE
+}
+
+enum TypeContact {
+  PHONE
+  EMAIL
+  FACEBOOK
+  GOOGLE
+  APPLE
+}
+
+enum TypePaymentState {
+  PENDIENTE
+  RECHAZADO
+  ANULADO
+  FINALIZADO
+}
