@@ -109,8 +109,8 @@ model Branches {
   id                    Int                 @id @default(autoincrement())
   businessId            Int                 @db.Integer
   name                  String              @db.VarChar(255)
-  address               String              @db.VarChar(255)
-  phone                 String              @db.VarChar(255)
+  address               String?             @db.VarChar(255)
+  phone                 String?             @db.VarChar(255)
   state                 Boolean             @default(true)
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt

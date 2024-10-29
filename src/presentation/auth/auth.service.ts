@@ -72,7 +72,6 @@ export class AuthService {
         result: { token },
       });
     }
-    console.log(JSON.stringify(user));
     const { ...userEntity } = UserEntity.fromObjectAuth(user);
 
     return CustomSuccessful.response({
