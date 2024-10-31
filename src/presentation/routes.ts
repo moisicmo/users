@@ -9,6 +9,8 @@ import { StudentRoutes } from './student/routes';
 import { TeacherRoutes } from './teacher/routes';
 import { TutorRoutes } from './tutor/routes';
 import { BusinessRoutes } from './business/routes';
+import { PlanRoutes } from './plan/routes';
+import { SubscriptionRoutes } from './subscription/routes';
 export class AppRoutes {
 
 
@@ -26,6 +28,8 @@ export class AppRoutes {
     router.use('/api/teacher', TeacherRoutes.routes);
     router.use('/api/tutor', TutorRoutes.routes);
     router.use('/api/business', BusinessRoutes.routes);
+    router.use('/api/plan', PlanRoutes.routes);
+    router.use('/api/subscription', SubscriptionRoutes.routes);
 
     return router;
   }

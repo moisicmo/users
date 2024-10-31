@@ -87,8 +87,8 @@ model Subscriptions {
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
   payments              Payments[]
-  businesses            Businesses          @relation(fields: [businessId], references: [id])
-  plans                 Plans               @relation(fields: [planId], references: [id])
+  business              Businesses          @relation(fields: [businessId], references: [id])
+  plan                  Plans               @relation(fields: [planId], references: [id])
 }
 
 model Businesses {

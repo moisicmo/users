@@ -11,7 +11,7 @@ export class BusinessDto {
 
     const { typeBusiness, name, url } = object;
 
-    if (!typeBusiness) return ['El id del negocio es obligatorio'];
+    if (!typeBusiness) return ['El tipo de negocio es obligatorio'];
     if (!name) return ['El nombre es obligatorio'];
     if (!url) return ['La dirección es obligatorio'];
 

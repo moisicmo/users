@@ -85,6 +85,39 @@ async function main() {
         EXECUTE FUNCTION create_branch_on_business();
       `);
 
+
+      await prisma.$executeRawUnsafe(`
+        CREATE OR REPLACE FUNCTION update_subscription_on_payment_state()
+        RETURNS TRIGGER AS $$
+        DECLARE
+            subscription_id INTEGER;
+        BEGIN
+            -- Verificar si el estado de pago es FINALIZADO
+            IF NEW."TypePaymentState" = 'FINALIZADO' THEN
+                -- Obtener el id de la suscripción asociada al pago
+                SELECT "subscriptionId" INTO subscription_id
+                FROM "Payments"
+                WHERE id = NEW."paymentId";
+
+                -- Actualizar el estado de la suscripción a true
+                UPDATE "Subscriptions"
+                SET "state" = true
+                WHERE id = subscription_id;
+            END IF;
+
+            RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql;
+      `);
+
+      await prisma.$executeRawUnsafe(`
+        CREATE TRIGGER trigger_update_subscription_on_payment_state
+        AFTER INSERT ON "PaymentStates"
+        FOR EACH ROW
+        EXECUTE FUNCTION update_subscription_on_payment_state();
+      `);
+
+
     // CREAR PLANES
     const plans = await prisma.plans.createManyAndReturn({
       data: [
@@ -132,8 +165,6 @@ async function main() {
       data: {
         businessId: business.id,
         planId: plans[0].id,
-        state: true,
-        updatedAt: new Date(),
       }
     });
 

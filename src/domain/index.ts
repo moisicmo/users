@@ -11,6 +11,8 @@ export * from './entities/role.entity';
 export * from './entities/permission.entity';
 export * from './entities/business.entity';
 export * from './entities/contact.entity';
+export * from './entities/plans.entity';
+export * from './entities/subscription.entity';
 
 export * from './dtos/branch/branch.dto';
 export * from './dtos/auth/register-user.dto';
@@ -22,5 +24,7 @@ export * from './dtos/user/tutor.dto';
 export * from './dtos/role/role.dto';
 export * from './dtos/user/staff.dto';
 export * from './dtos/business/business.dto';
+export * from './dtos/plans/plans.dto';
+export * from './dtos/subscription/subscription.dto';
 
 export * from './dtos/shared/pagination.dto';
