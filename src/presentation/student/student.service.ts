@@ -62,7 +62,7 @@ export class StudentService {
     try {
       let user = await prisma.users.findFirst({
         where: {
-          dni: dto.dni,
+          numberDocument: dto.dni,
         },
       });
       const contact = await prisma.contacts.findFirst({
@@ -76,7 +76,7 @@ export class StudentService {
       // creamos al usuario
       user = await prisma.users.create({
         data: {
-          dni: dto.dni,
+          numberDocument: dto.dni,
           name: dto.name,
           lastName: dto.lastName,
           password: await bcryptAdapter.hash(dto.data),
@@ -93,9 +93,9 @@ export class StudentService {
       const student = await prisma.students.create({
         data: {
           userId: user.id,
-          code: dto.dni,
+          code: dto.dni??'',
           tutors: {
-            connect: dto.tutors.map((tutorsId) => ({ id: tutorsId })),
+            connect: dto.tutors.map((userId) => ({ userId: userId })),
           },
         },
         include: {
@@ -116,9 +116,9 @@ export class StudentService {
     }
   }
   // EDITAR ESTUDIANTE
-  async updateStudent(dto: StudentDto, user: UserEntity, studentId: number) {
+  async updateStudent(dto: StudentDto, user: UserEntity, userId: number) {
     const studentExists = await prisma.students.findFirst({
-      where: { id: studentId },
+      where: { userId: userId },
       include: {
         user: true,
       },
@@ -135,7 +135,7 @@ export class StudentService {
       });
 
       const student = await prisma.students.update({
-        where: { id: studentId },
+        where: { userId: userId },
         data: {
           // ...updateStudentDto,
           code: dto.dni,
@@ -152,14 +152,14 @@ export class StudentService {
     }
   }
   // ELIMINAR ESTUDIANTE
-  async deleteStudent(user: UserEntity, studentId: number) {
+  async deleteStudent(user: UserEntity, userId: number) {
     const studentExists = await prisma.students.findFirst({
-      where: { id: studentId },
+      where: { userId: userId },
     });
     if (!studentExists) throw CustomError.badRequest('El estudiante no existe');
     try {
       await prisma.students.update({
-        where: { id: studentId },
+        where: { userId: userId },
         data: {
           state: false,
         },
@@ -170,10 +170,10 @@ export class StudentService {
     }
   }
 
-  async getStudent(studentId: number) {
+  async getStudent(userId: number) {
     try {
       const student = await prisma.students.findFirst({
-        where: { id: studentId },
+        where: { userId: userId },
       });
       return CustomSuccessful.response({
         result: {

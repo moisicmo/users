@@ -1,22 +1,22 @@
 export class UserDto {
   constructor(
-    public readonly dni: string,
     public readonly name: string,
     public readonly lastName: string,
     public readonly typeContact: TypeContact,
     public readonly data: string,
+    public readonly dni?: string,
+    public readonly typeDocument?: TypeDocument,
   ) { }
 
   static body(object: { [key: string]: any }): [string?, UserDto?] {
-    const { dni, name, lastName, typeContact,data } = object;
+    const { name, lastName, typeContact, data, dni, typeDocument } = object;
 
-    if (!dni) return ['El número de carnet es obligatorio'];
     if (!name) return ['El nombre es obligatorio'];
     if (!lastName) return ['El apellido es obligatorio'];
     if (!typeContact) return ['El tipo de contacto es necesario'];
     if (!data) return ['El contacto es obligatorio'];
 
-    return [undefined, new UserDto(dni, name, lastName, typeContact, data)];
+    return [undefined, new UserDto(name, lastName, typeContact, data, dni, typeDocument)];
   }
 }
 
@@ -26,4 +26,11 @@ export enum TypeContact {
   FACEBOOK = 'FACEBOOK',
   GOOGLE = 'GOOGLE',
   APPLE = 'APPLE',
+}
+
+export enum TypeDocument {
+  DNI = 'DNI',
+  NIT = 'NIT',
+  PASAPORTE = 'PASAPORTE',
+  OTRO = 'OTRO',
 }

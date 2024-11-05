@@ -85,7 +85,7 @@ async function main() {
         EXECUTE FUNCTION create_branch_on_business();
       `);
 
-
+      //  CREA UNA FUNCIÓN; a partir de un estado FINALIZADO actualiza el state de la Subscription a true
       await prisma.$executeRawUnsafe(`
         CREATE OR REPLACE FUNCTION update_subscription_on_payment_state()
         RETURNS TRIGGER AS $$
@@ -193,7 +193,8 @@ async function main() {
     // CREAR USUARIO
     const user = await prisma.users.create({
       data: {
-        dni: envs.DNI,
+        numberDocument: envs.DNI,
+        typeDocument: 'DNI',
         name: envs.NAME_SEED,
         lastName: envs.LAST_NAME_SEED,
         password: bcryptAdapter.hash(envs.EMAIL_SEED),

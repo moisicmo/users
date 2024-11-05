@@ -7,7 +7,7 @@ export class StaffDto extends UserDto {
     roleId: number,
     userDto: UserDto
   ) {
-    super(userDto.dni, userDto.name, userDto.lastName, userDto.typeContact, userDto.data);
+    super(userDto.name, userDto.lastName, userDto.typeContact, userDto.data, userDto.dni);
     this.roleId = roleId;
   }
 

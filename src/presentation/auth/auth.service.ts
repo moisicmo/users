@@ -13,18 +13,18 @@ import { EmailService } from '../services';
 const prisma = new PrismaClient();
 
 export class AuthService {
-  
+
   constructor(
     private readonly emailService: EmailService
-  ) {}
+  ) { }
 
   public async loginUser(dto: LoginUserDto) {
-    
+
     const user = await prisma.users.findFirst({
-      include:{
-        contacts:{
-          where:{
-            data:dto.data,
+      include: {
+        contacts: {
+          where: {
+            data: dto.data,
             typeContact: dto.typeContact,
           }
         },
@@ -37,11 +37,11 @@ export class AuthService {
             },
           },
         },
-        student:true,
-        teacher:true,
-        branches:{
-          include:{
-            business:true,
+        student: true,
+        teacher: true,
+        branches: {
+          include: {
+            business: true,
           }
         }
       }
@@ -61,10 +61,10 @@ export class AuthService {
         dto.data
       );
       await prisma.contacts.update({
-        where: { userId_typeContact: { userId: user.contacts[0].userId, typeContact: user.contacts[0].typeContact } },
+        where: { userId: user.contacts[0].userId, typeContact: user.contacts[0].typeContact, },
         data: { codeValidation: await bcryptAdapter.hash(codeValidation) },
       });
-      
+
 
       return CustomSuccessful.response({
         statusCode: 1,
@@ -82,7 +82,7 @@ export class AuthService {
     });
   }
 
-  public validateEmail = async (validateUserDto: ValidateUserDto,user: UserEntity) => {
+  public validateEmail = async (validateUserDto: ValidateUserDto, user: UserEntity) => {
     try {
       // const isMatching = bcryptAdapter.compare(
       //   validateUserDto.code,

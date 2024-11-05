@@ -54,7 +54,7 @@ export class TutorService {
     try {
       let user = await prisma.users.findFirst({
         where: {
-          dni: dto.dni,
+          numberDocument: dto.dni,
         },
       });
       const contact = await prisma.contacts.findFirst({
@@ -67,7 +67,7 @@ export class TutorService {
       // creamos al usuario
       user = await prisma.users.create({
         data: {
-          dni: dto.dni,
+          numberDocument: dto.dni,
           name: dto.name,
           lastName: dto.lastName,
           password: await bcryptAdapter.hash(dto.data),
@@ -98,9 +98,9 @@ export class TutorService {
     }
   }
   // EDITAR TUTOR
-  async updateTutor(dto: TutorDto, user: UserEntity, tutorId: number) {
+  async updateTutor(dto: TutorDto, user: UserEntity, userId: number) {
     const teacherExists = await prisma.tutors.findFirst({
-      where: { id: tutorId },
+      where: { userId: userId },
       include: {
         user: true,
       },
@@ -117,7 +117,7 @@ export class TutorService {
       });
 
       const teacher = await prisma.tutors.update({
-        where: { id: tutorId },
+        where: { userId: userId },
         data: {
           // ...updateTeacherDto,
         },
@@ -133,14 +133,14 @@ export class TutorService {
     }
   }
   // ELIMINAR TUTOR
-  async deleteTutor(user: UserEntity, tutorId: number) {
+  async deleteTutor(user: UserEntity, userId: number) {
     const tutorExists = await prisma.tutors.findFirst({
-      where: { id: tutorId },
+      where: { userId: userId },
     });
     if (!tutorExists) throw CustomError.badRequest('El tutor no existe');
     try {
       await prisma.tutors.update({
-        where: { id: tutorId },
+        where: { userId: userId },
         data: {
           state: false,
         },

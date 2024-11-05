@@ -4,11 +4,11 @@ import { CustomError } from '../responses/custom.error';
 export class UserEntity {
   constructor(
     public id: number,
-    public dni: string,
     public name: string,
     public lastName: string,
     public contacts: ContactEntity[],
-    public branches:BranchEntity[],
+    public branches?:BranchEntity[],
+    public numberDocument?: string,
     public image?: string,
     public staffs?: StaffAuthEntity,
     public students?: StudentAuthEntity,
@@ -18,9 +18,9 @@ export class UserEntity {
   static fromObjectAuth(object: { [key: string]: any }) {
     const {
       id,
-      dni,
       name,
       lastName,
+      numberDocument,
       image,
       staff,
       student,
@@ -30,7 +30,6 @@ export class UserEntity {
     } = object;
 
     if (!id) throw CustomError.badRequest('Falta id');
-    if (!dni) throw CustomError.badRequest('Falta el número dni');
     if (!name) throw CustomError.badRequest('Falta el nombre');
     if (!lastName) throw CustomError.badRequest('Falta el apellido');
   
@@ -44,11 +43,11 @@ export class UserEntity {
 
     return new UserEntity(
       id,
-      dni,
       name,
       lastName,
       contactEntity,
       branchesEntity,
+      numberDocument,
       image,
       staffAuthEntity,
       studentAuthEntity,
@@ -57,13 +56,14 @@ export class UserEntity {
   }
 
   static fromObject(object: { [key: string]: any }) {
-    const { id, dni, name, lastName } = object;
+    const { id, name, lastName, contacts, branches } = object;
 
     if (!id) throw CustomError.badRequest('Falta id');
-    if (!dni) throw CustomError.badRequest('Falta el número de carnet');
     if (!name) throw CustomError.badRequest('Falta el nombre');
     if (!lastName) throw CustomError.badRequest('Falta el apellido');
+    const contactEntity = contacts ? contacts.map((e:ContactEntity)=>ContactEntity.fromObject(e)) : undefined;
+    const branchEntity = branches ? branches.map((e:BranchEntity)=>BranchEntity.fromObject(e)) : undefined;
 
-    return new UserEntity(id, dni, name, lastName, [], [],undefined,undefined);
+    return new UserEntity(id, name, lastName, contactEntity,branchEntity);
   }
 }

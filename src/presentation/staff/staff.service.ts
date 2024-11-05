@@ -55,7 +55,7 @@ export class StaffService {
     try {
       let user = await prisma.users.findFirst({
         where: {
-          dni: dto.dni,
+          numberDocument: dto.dni,
         },
       });
       const contact = await prisma.contacts.findFirst({
@@ -68,7 +68,7 @@ export class StaffService {
       // creamos al usuario
       user = await prisma.users.create({
         data: {
-          dni: dto.dni,
+          numberDocument: dto.dni,
           name: dto.name,
           lastName: dto.lastName,
           password: await bcryptAdapter.hash(dto.data),
@@ -104,10 +104,10 @@ export class StaffService {
   async updateStaff(
     updateStaffDto: StaffDto,
     user: UserEntity,
-    staffId: number
+    userId: number
   ) {
     const staffExists = await prisma.staffs.findFirst({
-      where: { id: staffId },
+      where: { userId: userId },
       include: {
         user: true,
         role: true,
@@ -125,7 +125,7 @@ export class StaffService {
       });
 
       const staff = await prisma.staffs.update({
-        where: { id: staffId },
+        where: { userId: userId },
         data: {
           ...updateStaffDto,
           roleId: updateStaffDto.roleId,
@@ -143,14 +143,14 @@ export class StaffService {
     }
   }
   // ELIMINAR STAFF
-  async deleteStaff(user: UserEntity, staffId: number) {
+  async deleteStaff(user: UserEntity, userId: number) {
     const staffExists = await prisma.staffs.findFirst({
-      where: { id: staffId },
+      where: { userId: userId },
     });
     if (!staffExists) throw CustomError.badRequest('El staff no existe');
     try {
       await prisma.staffs.update({
-        where: { id: staffId },
+        where: { userId: userId },
         data: {
           state: false,
         },

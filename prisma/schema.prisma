@@ -119,7 +119,7 @@ model Branches {
 }
 
 model Contacts {
-  userId                Int                 @db.Integer
+  userId                Int                 @id @unique
   typeContact           TypeContact         @default(EMAIL)
   data                  String              @db.VarChar(255)
   validated             Boolean             @default(false)
@@ -128,12 +128,12 @@ model Contacts {
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
   user                  Users               @relation(fields: [userId], references: [id])
-  @@unique([userId,typeContact])
 }
 
 model Users {
   id                    Int                 @id @default(autoincrement())
-  dni                   String              @unique
+  numberDocument        String?             @unique
+  typeDocument          TypeDocument?
   name                  String              @db.VarChar(255)
   lastName              String              @db.VarChar(255)
   image                 String?             @db.VarChar(255)
@@ -148,11 +148,19 @@ model Users {
   student               Students?
   teacher               Teachers?
   tutor                 Tutors?
+  customer              Customers?
+}
+
+model Customers {
+  userId                Int                 @id @unique
+  state                 Boolean             @default(true)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  user                  Users               @relation(fields: [userId], references: [id])
 }
 
 model Students {
-  id                    Int                 @id @default(autoincrement())
-  userId                Int                 @unique
+  userId                Int                 @id @unique
   code                  String              @unique
   birthdate             DateTime?           @db.Date
   gender                Gender?
@@ -164,23 +172,21 @@ model Students {
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
   user                  Users               @relation(fields: [userId], references: [id])
-  tutors                Tutors[]
+  tutors                Tutors[] 
 }
 
 model Tutors {
-  id                    Int                 @id @default(autoincrement())
-  userId                Int                 @unique
+  userId                Int                 @id @unique
   address               String              @db.VarChar(255)
   state                 Boolean             @default(true)
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
   user                  Users               @relation(fields: [userId], references: [id])
-  students              Students[]
+  students              Students[] 
 }
 
 model Teachers {
-  id                    Int                 @id @default(autoincrement())
-  userId                Int                 @unique
+  userId                Int                 @id @unique
   state                 Boolean             @default(true)
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
@@ -188,8 +194,7 @@ model Teachers {
 }
 
 model Staffs {
-  id                    Int                 @id @default(autoincrement())
-  userId                Int                 @unique
+  userId                Int                 @id @unique
   roleId                Int                 @db.Integer
   state                 Boolean             @default(true)
   superStaff            Boolean             @default(false)
@@ -197,17 +202,6 @@ model Staffs {
   updatedAt             DateTime            @updatedAt
   user                  Users               @relation(fields: [userId], references: [id])
   role                  Roles               @relation(fields: [roleId], references: [id])
-}
-
-model Permissions {
-  id                    Int                 @id @default(autoincrement())
-  businessId            Int                 @db.Integer
-  name                  String              @db.VarChar(255)
-  module                String              @db.VarChar(255)
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
-  businesses            Businesses          @relation(fields: [businessId], references: [id])
-  roles                 Roles[]
 }
 
 model Roles {
@@ -221,6 +215,18 @@ model Roles {
   permissions           Permissions[]
   staffs                Staffs[]
 }
+
+model Permissions {
+  id                    Int                 @id @default(autoincrement())
+  businessId            Int                 @db.Integer
+  name                  String              @db.VarChar(255)
+  module                String              @db.VarChar(255)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  businesses            Businesses          @relation(fields: [businessId], references: [id])
+  roles                 Roles[]
+}
+
 
 // ENUMUS SECTIONS
 
@@ -281,6 +287,13 @@ enum TypeContact {
   FACEBOOK
   GOOGLE
   APPLE
+}
+
+enum TypeDocument {
+  DNI
+  NIT
+  PASAPORTE
+  OTRO
 }
 
 enum TypePaymentState {

@@ -55,7 +55,7 @@ export class TeacherService {
     try {
       let user = await prisma.users.findFirst({
         where: {
-          dni: dto.dni,
+          numberDocument: dto.dni,
         },
       });
       const contact = await prisma.contacts.findFirst({
@@ -68,7 +68,7 @@ export class TeacherService {
       // creamos al usuario
       user = await prisma.users.create({
         data: {
-          dni: dto.dni,
+          numberDocument: dto.dni,
           name: dto.name,
           lastName: dto.lastName,
           password: await bcryptAdapter.hash(dto.data),
@@ -97,9 +97,9 @@ export class TeacherService {
     }
   }
   // EDITAR PROFESOR
-  async updateTeacher(dto: TeacherDto, user: UserEntity, teacherId: number) {
+  async updateTeacher(dto: TeacherDto, user: UserEntity, userId: number) {
     const teacherExists = await prisma.teachers.findFirst({
-      where: { id: teacherId },
+      where: { userId: userId },
       include: {
         user: true,
       },
@@ -116,7 +116,7 @@ export class TeacherService {
       });
 
       const teacher = await prisma.teachers.update({
-        where: { id: teacherId },
+        where: { userId: userId },
         data: {
           // ...updateTeacherDto,
         },
@@ -132,14 +132,14 @@ export class TeacherService {
     }
   }
   // ELIMINAR PROFESOR
-  async deleteTeacher(user: UserEntity, teacherId: number) {
+  async deleteTeacher(user: UserEntity, userId: number) {
     const teacherExists = await prisma.teachers.findFirst({
-      where: { id: teacherId },
+      where: { userId: userId },
     });
     if (!teacherExists) throw CustomError.badRequest('El docente no existe');
     try {
       await prisma.teachers.update({
-        where: { id: teacherId },
+        where: { userId: userId },
         data: {
           state: false,
         },

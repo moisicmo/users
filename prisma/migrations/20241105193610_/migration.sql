@@ -23,6 +23,9 @@ CREATE TYPE "TypeBusiness" AS ENUM ('ADMINISTRACION', 'SERVICIO', 'TIENDA', 'RES
 CREATE TYPE "TypeContact" AS ENUM ('PHONE', 'EMAIL', 'FACEBOOK', 'GOOGLE', 'APPLE');
 
 -- CreateEnum
+CREATE TYPE "TypeDocument" AS ENUM ('DNI', 'NIT', 'PASAPORTE', 'OTRO');
+
+-- CreateEnum
 CREATE TYPE "TypePaymentState" AS ENUM ('PENDIENTE', 'RECHAZADO', 'ANULADO', 'FINALIZADO');
 
 -- CreateTable
@@ -146,13 +149,16 @@ CREATE TABLE "Contacts" (
     "codeValidation" TEXT,
     "state" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Contacts_pkey" PRIMARY KEY ("userId")
 );
 
 -- CreateTable
 CREATE TABLE "Users" (
     "id" SERIAL NOT NULL,
-    "dni" TEXT NOT NULL,
+    "numberDocument" TEXT,
+    "typeDocument" "TypeDocument",
     "name" VARCHAR(255) NOT NULL,
     "lastName" VARCHAR(255) NOT NULL,
     "image" VARCHAR(255),
@@ -166,8 +172,17 @@ CREATE TABLE "Users" (
 );
 
 -- CreateTable
+CREATE TABLE "Customers" (
+    "userId" INTEGER NOT NULL,
+    "state" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Customers_pkey" PRIMARY KEY ("userId")
+);
+
+-- CreateTable
 CREATE TABLE "Students" (
-    "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
     "code" TEXT NOT NULL,
     "birthdate" DATE,
@@ -180,35 +195,32 @@ CREATE TABLE "Students" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Students_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Students_pkey" PRIMARY KEY ("userId")
 );
 
 -- CreateTable
 CREATE TABLE "Tutors" (
-    "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
     "address" VARCHAR(255) NOT NULL,
     "state" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Tutors_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Tutors_pkey" PRIMARY KEY ("userId")
 );
 
 -- CreateTable
 CREATE TABLE "Teachers" (
-    "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
     "state" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Teachers_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Teachers_pkey" PRIMARY KEY ("userId")
 );
 
 -- CreateTable
 CREATE TABLE "Staffs" (
-    "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
     "roleId" INTEGER NOT NULL,
     "state" BOOLEAN NOT NULL DEFAULT true,
@@ -216,19 +228,7 @@ CREATE TABLE "Staffs" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Staffs_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Permissions" (
-    "id" SERIAL NOT NULL,
-    "businessId" INTEGER NOT NULL,
-    "name" VARCHAR(255) NOT NULL,
-    "module" VARCHAR(255) NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Permissions_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Staffs_pkey" PRIMARY KEY ("userId")
 );
 
 -- CreateTable
@@ -241,6 +241,18 @@ CREATE TABLE "Roles" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Roles_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Permissions" (
+    "id" SERIAL NOT NULL,
+    "businessId" INTEGER NOT NULL,
+    "name" VARCHAR(255) NOT NULL,
+    "module" VARCHAR(255) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Permissions_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -265,13 +277,16 @@ CREATE TABLE "_PermissionsToRoles" (
 CREATE UNIQUE INDEX "Promotions_code_key" ON "Promotions"("code");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Contacts_userId_key" ON "Contacts"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Contacts_codeValidation_key" ON "Contacts"("codeValidation");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Contacts_userId_typeContact_key" ON "Contacts"("userId", "typeContact");
+CREATE UNIQUE INDEX "Users_numberDocument_key" ON "Users"("numberDocument");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Users_dni_key" ON "Users"("dni");
+CREATE UNIQUE INDEX "Customers_userId_key" ON "Customers"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Students_userId_key" ON "Students"("userId");
@@ -331,6 +346,9 @@ ALTER TABLE "Branches" ADD CONSTRAINT "Branches_businessId_fkey" FOREIGN KEY ("b
 ALTER TABLE "Contacts" ADD CONSTRAINT "Contacts_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Customers" ADD CONSTRAINT "Customers_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Students" ADD CONSTRAINT "Students_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -346,10 +364,10 @@ ALTER TABLE "Staffs" ADD CONSTRAINT "Staffs_userId_fkey" FOREIGN KEY ("userId") 
 ALTER TABLE "Staffs" ADD CONSTRAINT "Staffs_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Permissions" ADD CONSTRAINT "Permissions_businessId_fkey" FOREIGN KEY ("businessId") REFERENCES "Businesses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Roles" ADD CONSTRAINT "Roles_businessId_fkey" FOREIGN KEY ("businessId") REFERENCES "Businesses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Roles" ADD CONSTRAINT "Roles_businessId_fkey" FOREIGN KEY ("businessId") REFERENCES "Businesses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Permissions" ADD CONSTRAINT "Permissions_businessId_fkey" FOREIGN KEY ("businessId") REFERENCES "Businesses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_BranchesToUsers" ADD CONSTRAINT "_BranchesToUsers_A_fkey" FOREIGN KEY ("A") REFERENCES "Branches"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -358,10 +376,10 @@ ALTER TABLE "_BranchesToUsers" ADD CONSTRAINT "_BranchesToUsers_A_fkey" FOREIGN 
 ALTER TABLE "_BranchesToUsers" ADD CONSTRAINT "_BranchesToUsers_B_fkey" FOREIGN KEY ("B") REFERENCES "Users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_StudentsToTutors" ADD CONSTRAINT "_StudentsToTutors_A_fkey" FOREIGN KEY ("A") REFERENCES "Students"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_StudentsToTutors" ADD CONSTRAINT "_StudentsToTutors_A_fkey" FOREIGN KEY ("A") REFERENCES "Students"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_StudentsToTutors" ADD CONSTRAINT "_StudentsToTutors_B_fkey" FOREIGN KEY ("B") REFERENCES "Tutors"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_StudentsToTutors" ADD CONSTRAINT "_StudentsToTutors_B_fkey" FOREIGN KEY ("B") REFERENCES "Tutors"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_PermissionsToRoles" ADD CONSTRAINT "_PermissionsToRoles_A_fkey" FOREIGN KEY ("A") REFERENCES "Permissions"("id") ON DELETE CASCADE ON UPDATE CASCADE;

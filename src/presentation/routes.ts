@@ -11,6 +11,7 @@ import { TutorRoutes } from './tutor/routes';
 import { BusinessRoutes } from './business/routes';
 import { PlanRoutes } from './plan/routes';
 import { SubscriptionRoutes } from './subscription/routes';
+import { CustomerRoutes } from './customer/routes';
 export class AppRoutes {
 
 
@@ -26,6 +27,7 @@ export class AppRoutes {
     router.use('/api/permission', PermissionRoutes.routes);
     router.use('/api/student', StudentRoutes.routes);
     router.use('/api/teacher', TeacherRoutes.routes);
+    router.use('/api/customer', CustomerRoutes.routes);
     router.use('/api/tutor', TutorRoutes.routes);
     router.use('/api/business', BusinessRoutes.routes);
     router.use('/api/plan', PlanRoutes.routes);
