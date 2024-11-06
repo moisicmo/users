@@ -58,35 +58,8 @@ async function main() {
         EXECUTE FUNCTION create_payment_on_subscription();
       `);
 
-    //  CREA UNA FUNCIÓN; a partir de un Business crea Branch
+    //  CREA UNA FUNCIÓN; a partir de un estado FINALIZADO actualiza el state de la Subscription a true
     await prisma.$executeRawUnsafe(`
-        CREATE OR REPLACE FUNCTION create_branch_on_business()
-        RETURNS TRIGGER AS $$
-        BEGIN
-            -- Crear un pago
-            INSERT INTO "Branches" ("businessId", "name", "updatedAt")
-            VALUES (
-                NEW.id,
-                NEW.name,
-                CURRENT_TIMESTAMP
-            );
-            RETURN NEW;
-        END;
-        $$ LANGUAGE plpgsql;
-      `);
-
-    // ASIGNA UN TRIGGER A LA TABLA Businesses,
-    // DONDE LLAMA LA FUNCIÓN create_branch_on_business
-    // DESPUES DE CREAR UN Business
-    await prisma.$executeRawUnsafe(`
-        CREATE TRIGGER trigger_create_branch_on_business
-        AFTER INSERT ON "Businesses"
-        FOR EACH ROW
-        EXECUTE FUNCTION create_branch_on_business();
-      `);
-
-      //  CREA UNA FUNCIÓN; a partir de un estado FINALIZADO actualiza el state de la Subscription a true
-      await prisma.$executeRawUnsafe(`
         CREATE OR REPLACE FUNCTION update_subscription_on_payment_state()
         RETURNS TRIGGER AS $$
         DECLARE
@@ -110,7 +83,7 @@ async function main() {
         $$ LANGUAGE plpgsql;
       `);
 
-      await prisma.$executeRawUnsafe(`
+    await prisma.$executeRawUnsafe(`
         CREATE TRIGGER trigger_update_subscription_on_payment_state
         AFTER INSERT ON "PaymentStates"
         FOR EACH ROW
@@ -147,13 +120,30 @@ async function main() {
         }
       ]
     });
-
+    // CREAR USUARIO
+    const user = await prisma.users.create({
+      data: {
+        numberDocument: envs.DNI,
+        typeDocument: 'DNI',
+        name: envs.NAME_SEED,
+        lastName: envs.LAST_NAME_SEED,
+        password: bcryptAdapter.hash(envs.EMAIL_SEED),
+      },
+    });
     // CREAR NEGOCIO
     const business = await prisma.businesses.create({
       data: {
         typeBusiness: 'ADMINISTRACION',
         name: 'HOLU',
         url: 'www.holu.com',
+        branches: {
+          create: {
+            name: 'HOLU',
+            users:{
+              connect: [{ id: user.id }]
+            }
+          },
+        }
       },
       include: {
         branches: true
@@ -190,19 +180,7 @@ async function main() {
       },
     });
 
-    // CREAR USUARIO
-    const user = await prisma.users.create({
-      data: {
-        numberDocument: envs.DNI,
-        typeDocument: 'DNI',
-        name: envs.NAME_SEED,
-        lastName: envs.LAST_NAME_SEED,
-        password: bcryptAdapter.hash(envs.EMAIL_SEED),
-        branches: {
-          connect: business.branches.map((branch) => ({ id: branch.id })),
-        }
-      },
-    });
+
 
     // CREAR CONTACTO
     await prisma.contacts.create({

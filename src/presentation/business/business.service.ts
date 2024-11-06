@@ -11,7 +11,7 @@ import {
 const prisma = new PrismaClient();
 
 export class BusinessService {
-  constructor() {}
+  constructor() { }
 
   // OBTENER NEGOCIOS
   async getBusiness(paginationDto: PaginationDto) {
@@ -51,18 +51,25 @@ export class BusinessService {
 
   // CREAR NEGOCIO
   async createBusiness(dto: BusinessDto, user: UserEntity) {
-    const businessExists = await prisma.businesses.findFirst({
-      where: {
-        name: dto.name,
-      },
-    });
-    if (businessExists) throw CustomError.badRequest('El negocio ya existe');
-
     try {
+      const businessExists = await prisma.businesses.findFirst({
+        where: {
+          name: dto.name,
+        },
+      });
+      if (businessExists) throw CustomError.badRequest('El negocio ya existe');
+
       const business = await prisma.businesses.create({
         data: {
           ...dto,
-          state: true,
+          branches: {
+            create: {
+              name: dto.name,
+              users: {
+                connect: [{ id: user.id }]
+              }
+            },
+          }
         },
       });
 

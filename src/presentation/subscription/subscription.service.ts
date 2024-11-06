@@ -11,7 +11,7 @@ import {
 const prisma = new PrismaClient();
 
 export class SubscriptionService {
-  constructor() {}
+  constructor() { }
 
   // OBTENER SUSCRIPCIONES
   async getSubscriptions(paginationDto: PaginationDto) {
@@ -25,9 +25,9 @@ export class SubscriptionService {
           },
           skip: (page - 1) * limit,
           take: limit,
-          include:{
-            business:true,
-            plan:true,
+          include: {
+            business: true,
+            plan: true,
           }
         }),
       ]);
@@ -52,6 +52,31 @@ export class SubscriptionService {
 
   // CREAR SUSCRIPCIÓN
   async createSubscription(dto: SubscriptionDto, user: UserEntity) {
+    // buscamos el negocio
+    const business = await prisma.businesses.findFirst({
+      where: {
+        id: dto.businessId,
+        branches: {
+          some: {
+            users: {
+              some: {
+                id: user.id
+              }
+            }
+          },
+        }
+      }
+    });
+    if (!business) throw CustomError.badRequest('No se pudo encontrar el negocio solicitado');
+    // buscamos el plan
+    const plan = await prisma.plans.findFirst({
+      where: {
+        id: dto.planId,
+        state: true,
+      }
+    });
+    if (!plan) throw CustomError.badRequest('No se pudo encontrar el plan solicitado');
+    // buscamos si ya existe la suscripción
     const exists = await prisma.subscriptions.findFirst({
       where: {
         businessId: dto.businessId,
@@ -65,9 +90,9 @@ export class SubscriptionService {
         data: {
           ...dto,
         },
-        include:{
-          business:true,
-          plan:true,
+        include: {
+          business: true,
+          plan: true,
         }
       });
 

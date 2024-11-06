@@ -21,13 +21,16 @@ export class AuthService {
   public async loginUser(dto: LoginUserDto) {
 
     const user = await prisma.users.findFirst({
-      include: {
+      where: {
         contacts: {
-          where: {
-            data: dto.data,
+          some: {
             typeContact: dto.typeContact,
-          }
+            data: dto.data,
+          },
         },
+      },
+      include: {
+        contacts: true,
         staff: {
           include: {
             role: {
@@ -39,11 +42,12 @@ export class AuthService {
         },
         student: true,
         teacher: true,
+        customer: true,
         branches: {
           include: {
             business: true,
           }
-        }
+        },
       }
     })
     if (!user) throw CustomError.badRequest('No se pudo autenticar al usuario');
@@ -56,22 +60,20 @@ export class AuthService {
     const token = await JwtAdapter.generateToken({ id: user.id });
     if (!token) throw CustomError.internalServer('Error al crear la llave');
 
-    if (!user.contacts[0].validated) {
-      const codeValidation = await this.sendEmailValidationLink(
-        dto.data
-      );
-      await prisma.contacts.update({
-        where: { userId: user.contacts[0].userId, typeContact: user.contacts[0].typeContact, },
-        data: { codeValidation: await bcryptAdapter.hash(codeValidation) },
-      });
-
-
-      return CustomSuccessful.response({
-        statusCode: 1,
-        message: 'Es necesario validar',
-        result: { token },
-      });
-    }
+    // if (!user.contacts[0].validated) {
+    //   const codeValidation = await this.sendEmailValidationLink(
+    //     dto.data
+    //   );
+    //   await prisma.contacts.update({
+    //     where: { userId: user.contacts[0].userId, typeContact: user.contacts[0].typeContact, },
+    //     data: { codeValidation: await bcryptAdapter.hash(codeValidation) },
+    //   });
+    //   return CustomSuccessful.response({
+    //     statusCode: 1,
+    //     message: 'Es necesario validar',
+    //     result: { token },
+    //   });
+    // }
     const { ...userEntity } = UserEntity.fromObjectAuth(user);
 
     return CustomSuccessful.response({
@@ -111,6 +113,7 @@ export class AuthService {
     `;
     const options = {
       // from: `"CENTRO DE ESTUDIANTES" < ${process.env.USERGMAIL} > `,
+      from:'sadsads',
       to: email,
       subject: 'Código de verificación',
       htmlBody: html,

@@ -11,7 +11,7 @@ export class CustomerRoutes {
 
     // rutas
     router.get('/', [AuthMiddleware.validateJWT], controller.getCustomers);
-    router.post('/', [AuthMiddleware.validateJWT], controller.createCustomer);
+    router.post('/', controller.createCustomer);
     router.put('/:id', [AuthMiddleware.validateJWT], controller.updateCustomer);
     router.delete(
       '/:id',

@@ -1,5 +1,6 @@
 import { BranchEntity, ContactEntity, StaffAuthEntity, StudentAuthEntity, TeacherAuthEntity } from '..';
 import { CustomError } from '../responses/custom.error';
+import { TypeDocument } from '../dtos/user/user.dto';
 
 export class UserEntity {
   constructor(
@@ -7,37 +8,39 @@ export class UserEntity {
     public name: string,
     public lastName: string,
     public contacts: ContactEntity[],
-    public branches?:BranchEntity[],
+    public branches?: BranchEntity[],
     public numberDocument?: string,
+    public typeDocument?: TypeDocument,
     public image?: string,
     public staffs?: StaffAuthEntity,
     public students?: StudentAuthEntity,
     public teachers?: TeacherAuthEntity,
-  ) {}
+  ) { }
 
   static fromObjectAuth(object: { [key: string]: any }) {
     const {
       id,
       name,
       lastName,
+      contacts,
+      branches,
       numberDocument,
+      typeDocument,
       image,
       staff,
       student,
       teacher,
-      contacts,
-      branches,
     } = object;
 
     if (!id) throw CustomError.badRequest('Falta id');
     if (!name) throw CustomError.badRequest('Falta el nombre');
     if (!lastName) throw CustomError.badRequest('Falta el apellido');
-  
-    const staffAuthEntity = staff? StaffAuthEntity.fromObject(staff): undefined;
-    const studentAuthEntity = student? StudentAuthEntity.fromObject(student): undefined;
-    const teacherAuthEntity = teacher? TeacherAuthEntity.fromObject(teacher): undefined;
-    const contactEntity = contacts? contacts.map((e:ContactEntity)=>ContactEntity.fromObject(e)) : undefined;
-    const branchesEntity = branches? branches.map((e:BranchEntity)=>BranchEntity.fromObject(e)) : undefined;
+
+    const contactEntity = contacts ? contacts.map((e: ContactEntity) => ContactEntity.fromObject(e)) : undefined;
+    const branchesEntity = branches ? branches.map((e: BranchEntity) => BranchEntity.fromObject(e)) : undefined;
+    const staffAuthEntity = staff ? StaffAuthEntity.fromObject(staff) : undefined;
+    const studentAuthEntity = student ? StudentAuthEntity.fromObject(student) : undefined;
+    const teacherAuthEntity = teacher ? TeacherAuthEntity.fromObject(teacher) : undefined;
 
 
 
@@ -48,6 +51,7 @@ export class UserEntity {
       contactEntity,
       branchesEntity,
       numberDocument,
+      typeDocument,
       image,
       staffAuthEntity,
       studentAuthEntity,
@@ -61,9 +65,9 @@ export class UserEntity {
     if (!id) throw CustomError.badRequest('Falta id');
     if (!name) throw CustomError.badRequest('Falta el nombre');
     if (!lastName) throw CustomError.badRequest('Falta el apellido');
-    const contactEntity = contacts ? contacts.map((e:ContactEntity)=>ContactEntity.fromObject(e)) : undefined;
-    const branchEntity = branches ? branches.map((e:BranchEntity)=>BranchEntity.fromObject(e)) : undefined;
+    const contactEntity = contacts ? contacts.map((e: ContactEntity) => ContactEntity.fromObject(e)) : undefined;
+    const branchEntity = branches ? branches.map((e: BranchEntity) => BranchEntity.fromObject(e)) : undefined;
 
-    return new UserEntity(id, name, lastName, contactEntity,branchEntity);
+    return new UserEntity(id, name, lastName, contactEntity, branchEntity);
   }
 }

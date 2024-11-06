@@ -100,7 +100,6 @@ export class CustomerService {
             }
           }
       });
-      console.log(JSON.stringify(customer));
       const { ...customerEntity } = CustomerEntity.fromObject(customer);
       return CustomSuccessful.response({ result: customerEntity });
     } catch (error) {

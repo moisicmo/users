@@ -10,7 +10,7 @@ export class StudentDto extends UserDto {
     public educationLevel: EducationLevel,
     userDto: UserDto
   ) {
-    super(userDto.dni, userDto.name, userDto.lastName, userDto.typeContact, userDto.data);
+    super( userDto.name, userDto.lastName, userDto.typeContact, userDto.data);
   }
 
   static body(object: { [key: string]: any }): [string?, StudentDto?] {

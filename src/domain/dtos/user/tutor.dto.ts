@@ -7,7 +7,7 @@ export class TutorDto extends UserDto {
     public address: string,
     userDto: UserDto
   ) {
-    super(userDto.dni, userDto.name, userDto.lastName, userDto.typeContact, userDto.data);
+    super(userDto.name, userDto.lastName, userDto.typeContact, userDto.data);
   }
 
   static body(object: { [key: string]: any }): [string?, TutorDto?] {

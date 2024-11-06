@@ -13,7 +13,7 @@ export class TeacherAuthEntity {
 export class TeacherEntity extends UserEntity {
 
   constructor(id: number, user: UserEntity) {
-    super(user.id, user.dni, user.name, user.lastName, user.contacts, user.branches);
+    super(user.id, user.name, user.lastName, user.contacts, user.branches);
     this.id = id;
   }
   static fromObject(object: { [key: string]: any }) {

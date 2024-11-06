@@ -6,7 +6,7 @@ export class TeacherDto extends UserDto {
     public readonly phone: string,
     userDto: UserDto,
   ) {
-    super(userDto.dni, userDto.name, userDto.lastName, userDto.typeContact, userDto.data);
+    super(userDto.name, userDto.lastName, userDto.typeContact, userDto.data);
   }
 
   static body(object: { [key: string]: any }): [string?, TeacherDto?] {
