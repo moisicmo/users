@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { bcryptAdapter, envs } from '../src/config';
+import { envs } from '../src/config/envs';
+import { bcryptAdapter } from '../src/config/bcrypt.adapter';
 
 async function main() {
   const prisma = new PrismaClient();

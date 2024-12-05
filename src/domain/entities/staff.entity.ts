@@ -1,4 +1,4 @@
-import { RoleEntity, UserEntity } from '..';
+import { RoleEntity, UserEntity } from '@/domain';
 
 export class StaffAuthEntity {
   constructor(public id: number, public role?: RoleEntity) {}

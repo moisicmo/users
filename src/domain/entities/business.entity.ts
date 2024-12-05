@@ -1,5 +1,4 @@
-import { TypeBusiness } from '../dtos/business/business.dto';
-
+import { TypeBusiness } from '@/domain';
 export class BusinessEntity {
   constructor(
     public id: number,

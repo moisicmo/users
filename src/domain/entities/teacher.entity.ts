@@ -1,4 +1,4 @@
-import { UserEntity } from "..";
+import { UserEntity } from '@/domain';
 
 export class TeacherAuthEntity {
   constructor(

@@ -1,4 +1,4 @@
-import { TypePlan } from "..";
+import { TypePlan } from '@/domain';
 
 export class PlanEntity {
   constructor(

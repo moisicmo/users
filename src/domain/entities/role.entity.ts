@@ -1,4 +1,4 @@
-import { PermissionEntity } from "..";
+import { PermissionEntity } from '@/domain';
 
 export class RoleEntity {
   constructor(

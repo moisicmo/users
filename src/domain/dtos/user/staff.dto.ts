@@ -1,4 +1,4 @@
-import { UserDto } from "./user.dto";
+import { UserDto } from '@/domain';
 
 export class StaffDto extends UserDto {
   public readonly roleId: number;

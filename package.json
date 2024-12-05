@@ -1,12 +1,12 @@
 {
-  "name": "ceupro-backend",
+  "name": "users-backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsnd --respawn --clear src/app.ts",
+    "dev": "tsnd --respawn --clear -r tsconfig-paths/register src/app.ts",
     "build": "rimraf ./dist && tsc",
-    "start": "npm run build && node dist/app.js",
+    "start": "yarn build && node dist/app.js",
     "seeder": "NODE_ENV=development prisma db seed"
   },
   "prisma": {
@@ -27,6 +27,7 @@
     "rimraf": "^5.0.7",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5"
   },
   "dependencies": {

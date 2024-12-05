@@ -1,5 +1,5 @@
 import { EducationLevel } from '@prisma/client';
-import { Gender, TutorEntity, UserEntity } from '..';
+import { Gender, TutorEntity, UserEntity } from '@/domain';
 
 export class StudentAuthEntity {
   constructor(public id: number, public code: string) {}

@@ -1,7 +1,7 @@
-import { envs } from './config/envs';
 import { PrismaClient } from '@prisma/client'
-import { AppRoutes } from './presentation/routes';
-import { Server } from './server';
+import { envs } from '@/config/envs';
+import { Server } from '@/server';
+import { AppRoutes } from '@/presentation/router';
 
 async function main() {
   const prisma = new PrismaClient();

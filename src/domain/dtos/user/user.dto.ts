@@ -1,3 +1,5 @@
+import { TypeContact, TypeDocument } from '@/domain';
+
 export class UserDto {
   constructor(
     public readonly name: string,
@@ -18,19 +20,4 @@ export class UserDto {
 
     return [undefined, new UserDto(name, lastName, typeContact, data, dni, typeDocument)];
   }
-}
-
-export enum TypeContact {
-  PHONE = 'PHONE',
-  EMAIL = 'EMAIL',
-  FACEBOOK = 'FACEBOOK',
-  GOOGLE = 'GOOGLE',
-  APPLE = 'APPLE',
-}
-
-export enum TypeDocument {
-  DNI = 'DNI',
-  NIT = 'NIT',
-  PASAPORTE = 'PASAPORTE',
-  OTRO = 'OTRO',
 }

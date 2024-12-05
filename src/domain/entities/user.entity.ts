@@ -1,6 +1,4 @@
-import { BranchEntity, ContactEntity, StaffAuthEntity, StudentAuthEntity, TeacherAuthEntity } from '..';
-import { CustomError } from '../responses/custom.error';
-import { TypeDocument } from '../dtos/user/user.dto';
+import { BranchEntity, ContactEntity, StaffAuthEntity, StudentAuthEntity, TeacherAuthEntity, TypeDocument, CustomError } from '@/domain';
 
 export class UserEntity {
   constructor(

@@ -1,4 +1,4 @@
-import { BusinessEntity, PlanEntity, TypePlan } from "..";
+import { BusinessEntity, PlanEntity } from '@/domain';
 
 export class SubscriptionEntity {
   constructor(

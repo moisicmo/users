@@ -1,32 +1,44 @@
-export * from './responses/custom.error';
-export * from './responses/custom.successful';
+// RESPONSES
+export * from '@/domain/responses/custom.error';
+export * from '@/domain/responses/custom.successful';
 
-export * from './entities/user.entity';
-export * from './entities/branch.entity';
-export * from './entities/staff.entity';
-export * from './entities/student.entity';
-export * from './entities/teacher.entity';
-export * from './entities/customer.entity';
-export * from './entities/tutor.entity';
-export * from './entities/role.entity';
-export * from './entities/permission.entity';
-export * from './entities/business.entity';
-export * from './entities/contact.entity';
-export * from './entities/plans.entity';
-export * from './entities/subscription.entity';
+// ENTITIES
+export * from '@/domain/entities/user.entity';
+export * from '@/domain/entities/branch.entity';
+export * from '@/domain/entities/staff.entity';
+export * from '@/domain/entities/student.entity';
+export * from '@/domain/entities/teacher.entity';
+export * from '@/domain/entities/customer.entity';
+export * from '@/domain/entities/tutor.entity';
+export * from '@/domain/entities/role.entity';
+export * from '@/domain/entities/permission.entity';
+export * from '@/domain/entities/business.entity';
+export * from '@/domain/entities/contact.entity';
+export * from '@/domain/entities/plans.entity';
+export * from '@/domain/entities/subscription.entity';
 
-export * from './dtos/branch/branch.dto';
-export * from './dtos/auth/register-user.dto';
-export * from './dtos/auth/login-user.dto';
-export * from './dtos/auth/validate.dto';
-export * from './dtos/user/student.dto';
-export * from './dtos/user/teacher.dto';
-export * from './dtos/user/customer.dto';
-export * from './dtos/user/tutor.dto';
-export * from './dtos/role/role.dto';
-export * from './dtos/user/staff.dto';
-export * from './dtos/business/business.dto';
-export * from './dtos/plans/plans.dto';
-export * from './dtos/subscription/subscription.dto';
+// DTOS
+export * from '@/domain/dtos/branch.dto';
+export * from '@/domain/dtos/register-user.dto';
+export * from '@/domain/dtos/login-user.dto';
+export * from '@/domain/dtos/validate.dto';
+export * from '@/domain/dtos/role.dto';
+export * from '@/domain/dtos/business.dto';
+export * from '@/domain/dtos/plans.dto';
+export * from '@/domain/dtos/subscription.dto';
+export * from '@/domain/dtos/business.dto';
+export * from '@/domain/dtos/user/student.dto';
+export * from '@/domain/dtos/user/teacher.dto';
+export * from '@/domain/dtos/user/customer.dto';
+export * from '@/domain/dtos/user/tutor.dto';
+export * from '@/domain/dtos/user/user.dto';
+export * from '@/domain/dtos/user/staff.dto';
 
-export * from './dtos/shared/pagination.dto';
+// PAGINATION
+export * from '@/domain/dtos/pagination.dto';
+
+// ENUMS
+export * from '@/domain/enums/typeBusiness';
+export * from '@/domain/enums/typeContact';
+export * from '@/domain/enums/typeDocument';
+export * from '@/domain/enums/typePlan';

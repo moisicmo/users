@@ -1,4 +1,4 @@
-import { BusinessEntity } from "./business.entity";
+import { BusinessEntity } from '@/domain';
 
 export class BranchEntity {
   constructor(
