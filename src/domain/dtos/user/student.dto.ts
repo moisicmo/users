@@ -1,4 +1,4 @@
-import { UserDto } from '@/domain';
+import { UserDto, EducationLevel, Gender } from '@/domain';
 
 export class StudentDto extends UserDto {
   constructor(
@@ -46,13 +46,4 @@ export class StudentDto extends UserDto {
       ),
     ];
   }
-}
-
-export enum Gender {
-  MALE = 'MASCULINO',
-  FEMALE = 'FEMENINO',
-}
-export enum EducationLevel {
-  PRIMARY = 'PRIMARIA',
-  SECONDARY = 'SECUNDARIA',
 }

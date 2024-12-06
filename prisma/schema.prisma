@@ -149,8 +149,16 @@ model Users {
   teacher               Teachers?
   tutor                 Tutors?
   customer              Customers?
+  player                Players?
 }
-
+model Players {
+  userId                Int                 @id @unique
+  nick                  String              @db.VarChar(255)
+  state                 Boolean             @default(true)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  user                  Users               @relation(fields: [userId], references: [id])
+}
 model Customers {
   userId                Int                 @id @unique
   state                 Boolean             @default(true)

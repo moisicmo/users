@@ -172,6 +172,17 @@ CREATE TABLE "Users" (
 );
 
 -- CreateTable
+CREATE TABLE "Players" (
+    "userId" INTEGER NOT NULL,
+    "nick" VARCHAR(255) NOT NULL,
+    "state" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Players_pkey" PRIMARY KEY ("userId")
+);
+
+-- CreateTable
 CREATE TABLE "Customers" (
     "userId" INTEGER NOT NULL,
     "state" BOOLEAN NOT NULL DEFAULT true,
@@ -286,6 +297,9 @@ CREATE UNIQUE INDEX "Contacts_codeValidation_key" ON "Contacts"("codeValidation"
 CREATE UNIQUE INDEX "Users_numberDocument_key" ON "Users"("numberDocument");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Players_userId_key" ON "Players"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Customers_userId_key" ON "Customers"("userId");
 
 -- CreateIndex
@@ -344,6 +358,9 @@ ALTER TABLE "Branches" ADD CONSTRAINT "Branches_businessId_fkey" FOREIGN KEY ("b
 
 -- AddForeignKey
 ALTER TABLE "Contacts" ADD CONSTRAINT "Contacts_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Players" ADD CONSTRAINT "Players_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Customers" ADD CONSTRAINT "Customers_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

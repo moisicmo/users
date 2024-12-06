@@ -4,7 +4,7 @@ import {
   Authroutes,
   BranchRoutes,
   BusinessRoutes,
-  CustomerRoutes,
+  PlayerRoutes,
   PermissionRoutes,
   PlanRoutes,
   RoleRoutes,
@@ -21,18 +21,20 @@ export class AppRoutes {
 
     // Definir las rutas
     router.use('/api/auth', Authroutes.routes);
-    router.use('/api/branch', BranchRoutes.routes);
     router.use('/api/staff', StaffRoutes.routes);
-    router.use('/api/role', RoleRoutes.routes);
-    router.use('/api/permission', PermissionRoutes.routes);
     router.use('/api/student', StudentRoutes.routes);
     router.use('/api/teacher', TeacherRoutes.routes);
-    router.use('/api/customer', CustomerRoutes.routes);
+    router.use('/api/customer', PlayerRoutes.routes);
     router.use('/api/tutor', TutorRoutes.routes);
-    router.use('/api/business', BusinessRoutes.routes);
-    router.use('/api/plan', PlanRoutes.routes);
-    router.use('/api/subscription', SubscriptionRoutes.routes);
+    router.use('/api/player', PlayerRoutes.routes);
 
+    router.use('/api/role', RoleRoutes.routes);
+    router.use('/api/permission', PermissionRoutes.routes);
+    router.use('/api/business', BusinessRoutes.routes);
+    router.use('/api/branch', BranchRoutes.routes);
+    router.use('/api/subscription', SubscriptionRoutes.routes);
+    router.use('/api/plan', PlanRoutes.routes);
+    
     return router;
   }
 }
