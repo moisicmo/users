@@ -175,6 +175,9 @@ CREATE TABLE "Users" (
 CREATE TABLE "Players" (
     "userId" INTEGER NOT NULL,
     "nick" VARCHAR(255) NOT NULL,
+    "description" VARCHAR(255),
+    "points" INTEGER NOT NULL DEFAULT 100,
+    "recomend" INTEGER NOT NULL DEFAULT 0,
     "state" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

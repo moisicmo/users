@@ -10,7 +10,7 @@ export class PlayerDto extends UserDto {
   }
 
   static body(object: { [key: string]: any }): [string?, PlayerDto?] {
-    const { phone: nick, ...userData } = object;
+    const { nick, ...userData } = object;
     if (!nick) return ['El nick es obligatorio'];
     const [error, userDto] = UserDto.body(userData);
     if (error) return [error];
