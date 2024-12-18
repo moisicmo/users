@@ -1,7 +1,8 @@
+require('module-alias/register');
 import { PrismaClient } from '@prisma/client'
-import { envs } from '@/config/envs';
-import { Server } from '@/server';
 import { AppRoutes } from '@/presentation/router';
+import { Server } from '@/server';
+import { envs } from '@/config';
 
 async function main() {
   const prisma = new PrismaClient();
