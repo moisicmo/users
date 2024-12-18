@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { CustomError, LoginUserDto, ValidateUserDto } from '@/domain';
+import { ChangePasswordDto, CustomError, LoginUserDto, ValidateUserDto } from '@/domain';
 import { AuthService } from '@/presentation';
 
 export class AuthController {
@@ -30,6 +30,15 @@ export class AuthController {
     if (error) return res.status(400).json({ error });
     this.authService
       .validateEmail(validateUserDto!)
+      .then((result) => res.json(result))
+      .catch((error) => this.handleError(error, res));
+  };
+
+  changePassword = (req: Request, res: Response) => {
+    const [error, changePasswordDto] = ChangePasswordDto.create(req.body);
+    if (error) return res.status(400).json({ error });
+    this.authService
+      .changePassword(changePasswordDto!)
       .then((result) => res.json(result))
       .catch((error) => this.handleError(error, res));
   };

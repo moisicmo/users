@@ -17,6 +17,7 @@ export * from '@/domain/dtos/user/player.dto';
 
 export * from '@/domain/dtos/branch.dto';
 export * from '@/domain/dtos/register-user.dto';
+export * from '@/domain/dtos/change-pwd.dto';
 export * from '@/domain/dtos/login-user.dto';
 export * from '@/domain/dtos/validate.dto';
 export * from '@/domain/dtos/role.dto';

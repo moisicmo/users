@@ -1,4 +1,5 @@
 import {
+  ChangePasswordDto,
   CustomError,
   CustomSuccessful,
   LoginUserDto,
@@ -88,33 +89,59 @@ export class AuthService {
     });
   }
 
-  public validateEmail = async (validateUserDto: ValidateUserDto) => {
+  public validateEmail = async (dto: ValidateUserDto) => {
     try {
       const contact = await prisma.contacts.findFirst({
         where:{
-          data:validateUserDto.data
+          data:dto.data
         }
       });
-      if(!contact)throw CustomError.badRequest(`No existe el registro ${validateUserDto.data}`);
+      if(!contact)throw CustomError.badRequest(`No existe el registro ${dto.data}`);
       if(!contact.codeValidation)throw CustomError.badRequest(`No se registro un código de validación`);
       const isMatching = bcryptAdapter.compare(
-        validateUserDto.code,
+        dto.code,
         contact.codeValidation
       );
       if (!isMatching) throw CustomError.badRequest('El código es incorrecto');
       await prisma.contacts.update({
         where:{
           userId:contact.userId,
-          data:validateUserDto.data
+          data:dto.data
         },
         data: { validated: true },
       });
-      await this.sendEmailValidationSuccess(validateUserDto.data);
+      await this.sendEmailValidationSuccess(dto.data);
       return CustomSuccessful.response({ message: 'Verificación correcta' });
     } catch (error) {
       throw CustomError.internalServer(`${error}`);
     }
   };
+
+  public changePassword = async (dto:ChangePasswordDto)=>{
+    try {
+      const contact = await prisma.contacts.findFirst({
+        where:{
+          data:dto.data
+        }
+      });
+      if(!contact)throw CustomError.badRequest(`No existe el registro ${dto.data}`);
+      if(!contact.codeValidation)throw CustomError.badRequest(`No se registro un código de validación`);
+      const isMatching = bcryptAdapter.compare(
+        dto.code,
+        contact.codeValidation
+      );
+      if (!isMatching) throw CustomError.badRequest('El código es incorrecto');
+      await prisma.users.update({
+        where:{
+          id:contact.userId,
+        },
+        data: { password: await bcryptAdapter.hash(dto.newPassword) },
+      });
+      return CustomSuccessful.response({ message: 'Cambio de contraseña correcto' });
+    } catch (error) {
+      throw CustomError.internalServer(`${error}`);
+    }
+  }
 
   private sendEmailValidationLink = async (email: string) => {
     const codeg = uuidv4().substring(0, 4);

@@ -21,6 +21,8 @@ export class Authroutes {
     
     router.post('/validate-email',controller.validateEmail);
 
+    router.post('/change-password',controller.changePassword);
+
     return router;
   }
 }
