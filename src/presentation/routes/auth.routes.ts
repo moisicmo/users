@@ -19,7 +19,7 @@ export class Authroutes {
 
     router.post('/', controller.loginUser);
     
-    // router.post('/validate-email',[AuthMiddleware.validateJWT],controller.validateEmail);
+    router.post('/validate-email',controller.validateEmail);
 
     return router;
   }

@@ -29,7 +29,7 @@ export class AuthController {
     const [error, validateUserDto] = ValidateUserDto.create(req.body);
     if (error) return res.status(400).json({ error });
     this.authService
-      .validateEmail(validateUserDto!, req.body.user)
+      .validateEmail(validateUserDto!)
       .then((result) => res.json(result))
       .catch((error) => this.handleError(error, res));
   };
