@@ -1,4 +1,4 @@
-import { BranchEntity, ContactEntity, StaffAuthEntity, StudentAuthEntity, TeacherAuthEntity, TypeDocument, CustomError } from '@/domain';
+import { BranchEntity, ContactEntity, StaffAuthEntity, StudentAuthEntity, TeacherAuthEntity, TypeDocument, CustomError, PlayerAuthEntity } from '@/domain';
 
 export class UserEntity {
   constructor(
@@ -13,6 +13,7 @@ export class UserEntity {
     public staffs?: StaffAuthEntity,
     public students?: StudentAuthEntity,
     public teachers?: TeacherAuthEntity,
+    public player?: PlayerAuthEntity,
   ) { }
 
   static fromObjectAuth(object: { [key: string]: any }) {
@@ -28,6 +29,7 @@ export class UserEntity {
       staff,
       student,
       teacher,
+      player,
     } = object;
 
     if (!id) throw CustomError.badRequest('Falta id');
@@ -39,6 +41,7 @@ export class UserEntity {
     const staffAuthEntity = staff ? StaffAuthEntity.fromObject(staff) : undefined;
     const studentAuthEntity = student ? StudentAuthEntity.fromObject(student) : undefined;
     const teacherAuthEntity = teacher ? TeacherAuthEntity.fromObject(teacher) : undefined;
+    const playerAuthEntity = player ? PlayerAuthEntity.fromObject(player) : undefined;
 
 
 
@@ -54,6 +57,7 @@ export class UserEntity {
       staffAuthEntity,
       studentAuthEntity,
       teacherAuthEntity,
+      playerAuthEntity,
     );
   }
 

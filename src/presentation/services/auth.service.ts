@@ -44,6 +44,7 @@ export class AuthService {
         student: true,
         teacher: true,
         customer: true,
+        player:true,
         branches: {
           include: {
             business: true,

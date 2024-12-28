@@ -1,5 +1,18 @@
 import { UserEntity } from '@/domain';
 
+export class PlayerAuthEntity {
+  constructor(
+    public nick: string,
+    public description: string,
+    public points: number,
+    public recomend: number,
+  ) { }
+  static fromObject(object: { [key: string]: any }) {
+    const { nick, description, points, recomend } = object;
+    return new PlayerAuthEntity(nick, description, points, recomend);
+  }
+}
+
 export class PlayerEntity extends UserEntity {
   constructor(
     public nick: string,
